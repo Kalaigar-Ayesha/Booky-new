@@ -1,102 +1,96 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Github, Mail, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const footerLinks = [
+    {
+      title: 'Explore',
+      links: [
+        { label: 'Discover', href: '/discover' },
+        { label: 'Lists', href: '/lists' },
+        { label: 'Community', href: '/community' }
+      ]
+    },
+    {
+      title: 'Account',
+      links: [
+        { label: 'My Books', href: '/my-books' },
+        { label: 'Profile', href: '/profile' },
+        { label: 'Sign In', href: '/auth' }
+      ]
+    },
+    {
+      title: 'Resources',
+      links: [
+        { label: 'Help', href: '#help' },
+        { label: 'Privacy', href: '#privacy' },
+        { label: 'Terms', href: '#terms' }
+      ]
+    }
+  ];
+
+  const socialLinks = [
+    { icon: Twitter, href: '#twitter', label: 'Twitter' },
+    { icon: Github, href: '#github', label: 'GitHub' },
+    { icon: Mail, href: '#contact', label: 'Contact' }
+  ];
+
   return (
-    <footer className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 border-t mt-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-8">
-          <div className="flex-1">
+    <footer className="bg-gradient-to-b from-gray-50 to-gray-100 border-t border-gray-200">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-12 sm:py-16">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
+          <div className="col-span-2 sm:col-span-1">
             <div className="flex items-center space-x-3 mb-4">
-              <BookOpen className="h-7 w-7 text-amber-600" />
+              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
               <Link to="/" className="text-xl font-bold text-gray-900 hover:text-amber-600 transition-colors">
                 Booky
               </Link>
             </div>
-            <p className="text-sm text-gray-600">A simple place to track, discover and discuss books you love.</p>
+            <p className="text-sm text-gray-600">A modern platform to track, discover, and discuss the books you love.</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 flex-1">
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">Explore</h4>
-              <ul className="text-sm text-gray-600 space-y-2">
-                <li>
-                  <Link to="/discover" className="hover:text-amber-600 transition-colors">
-                    Discover
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/lists" className="hover:text-amber-600 transition-colors">
-                    Lists
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/community" className="hover:text-amber-600 transition-colors">
-                    Community
-                  </Link>
-                </li>
+          {footerLinks.map((column) => (
+            <div key={column.title}>
+              <h4 className="text-sm font-semibold text-gray-900 mb-4">{column.title}</h4>
+              <ul className="space-y-3">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link 
+                      to={link.href} 
+                      className="text-sm text-gray-600 hover:text-amber-600 transition-colors duration-200 font-medium"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
-
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">Account</h4>
-              <ul className="text-sm text-gray-600 space-y-2">
-                <li>
-                  <Link to="/my-books" className="hover:text-amber-600 transition-colors">
-                    My Books
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/profile" className="hover:text-amber-600 transition-colors">
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/auth" className="hover:text-amber-600 transition-colors">
-                    Sign In
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">Resources</h4>
-              <ul className="text-sm text-gray-600 space-y-2">
-                <li>
-                  <a href="#help" className="hover:text-amber-600 transition-colors">
-                    Help
-                  </a>
-                </li>
-                <li>
-                  <a href="#privacy" className="hover:text-amber-600 transition-colors">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="#terms" className="hover:text-amber-600 transition-colors">
-                    Terms
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <div className="mt-8 pt-6 border-t flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-4">
-          <p>© {currentYear} Booky — Made with ❤️</p>
-          <div className="flex items-center space-x-4">
-            <a href="#twitter" className="hover:text-amber-600 transition-colors">
-              Twitter
-            </a>
-            <a href="#github" className="hover:text-amber-600 transition-colors">
-              GitHub
-            </a>
-            <a href="#contact" className="hover:text-amber-600 transition-colors">
-              Contact
-            </a>
+        <div className="pt-8 border-t border-gray-300">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <p className="text-sm text-gray-600">© {currentYear} Booky — Made with ❤️ for book lovers</p>
+            <div className="flex items-center space-x-4">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a 
+                    key={social.label}
+                    href={social.href} 
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-amber-600 hover:border-amber-600 hover:shadow-md transition-all duration-300"
+                    title={social.label}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

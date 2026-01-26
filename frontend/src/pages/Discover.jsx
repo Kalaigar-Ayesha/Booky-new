@@ -79,9 +79,11 @@ const Discover = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <BookOpen className="h-12 w-12 text-amber-600 animate-pulse mx-auto mb-4" />
+          <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <BookOpen className="h-6 w-6 text-white" />
+          </div>
           <p className="text-gray-600">Loading books...</p>
         </div>
       </div>
@@ -89,23 +91,23 @@ const Discover = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Discover Books</h1>
-          <p className="text-xl text-gray-600">Find your next great read</p>
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-3 sm:px-4">
+      <div className="container mx-auto max-w-6xl">
+        <div className="mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Discover Books</h1>
+          <p className="text-base sm:text-lg text-gray-600">Find your next great read</p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-8 sm:mb-10 hover:shadow-md transition-shadow duration-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="sm:col-span-2">
               <div className="relative">
                 <Search className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <Input
                   type="text"
                   placeholder="Search by title or author..."
-                  className="pl-10"
+                  className="pl-10 py-2 sm:py-3 rounded-lg border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -113,7 +115,7 @@ const Discover = () => {
             </div>
             <div>
               <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-                <SelectTrigger>
+                <SelectTrigger className="py-2 sm:py-3 rounded-lg">
                   <SelectValue placeholder="Genre" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,7 +128,7 @@ const Discover = () => {
             </div>
             <div>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
+                <SelectTrigger className="py-2 sm:py-3 rounded-lg">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -140,7 +142,7 @@ const Discover = () => {
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {books && books.length > 0 ? (
             books.map((book) => (
               <WorkingBookCard 
@@ -157,9 +159,9 @@ const Discover = () => {
               />
             ))
           ) : (
-            <div className="col-span-full text-center py-12">
-              <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg">No books found. Try adjusting your search.</p>
+            <div className="col-span-full text-center py-12 sm:py-16">
+              <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 text-base sm:text-lg">No books found. Try adjusting your search.</p>
             </div>
           )}
         </div>

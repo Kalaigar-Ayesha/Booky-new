@@ -41,17 +41,17 @@ export const BookGrid = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto max-w-6xl px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Trending Books</h2>
-            <p className="text-xl text-gray-600">Discover what the community is reading right now</p>
+      <section className="py-12 sm:py-20 bg-gray-50">
+        <div className="container mx-auto max-w-6xl px-3 sm:px-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Trending Books</h2>
+            <p className="text-base sm:text-lg text-gray-600">Discover what the community is reading right now</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm p-4 animate-pulse">
-                <div className="w-full h-80 bg-gray-200 rounded mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div key={i} className="bg-white rounded-2xl shadow-sm p-4 animate-pulse border border-gray-100">
+                <div className="w-full aspect-[3/4] bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded mb-3"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
               </div>
             ))}
@@ -62,14 +62,14 @@ export const BookGrid = () => {
   }
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Trending Books</h2>
-          <p className="text-xl text-gray-600">Discover what the community is reading right now</p>
+    <section className="py-12 sm:py-20 bg-gray-50">
+      <div className="container mx-auto max-w-6xl px-3 sm:px-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Trending Books</h2>
+          <p className="text-base sm:text-lg text-gray-600">Discover what the community is reading right now</p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {books.map((book) => (
             <BookCard 
               key={book.id || book._id} 
@@ -86,13 +86,13 @@ export const BookGrid = () => {
           ))}
         </div>
         
-        <div className="text-center mt-12">
-          <Button 
-            className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+        <div className="text-center mt-10 sm:mt-12">
+          <button 
             onClick={() => navigate('/discover')}
+            className="px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base"
           >
             View All Books
-          </Button>
+          </button>
         </div>
       </div>
     </section>

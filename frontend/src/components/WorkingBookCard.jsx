@@ -61,32 +61,34 @@ export const WorkingBookCard = ({ book }) => {
   };
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col bg-white border border-gray-200">
+    <Card className="group hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col bg-white border border-gray-100 hover:border-amber-200 rounded-2xl">
       <div className="aspect-[3/4] overflow-hidden bg-gray-100">
         <img
           src={book.cover || 'https://via.placeholder.com/300x400?text=No+Cover'}
           alt={book.title || 'Book Cover'}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           onError={(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Cover'; }}
         />
       </div>
-      <CardContent className="p-4 flex-grow flex flex-col justify-between"  style={{ display: 'flex', flexDirection: 'column' }}>
-        <h3 className="font-semibold text-base mb-1 line-clamp-2 text-gray-900" title={book.title}>{book.title || 'Unknown Title'}</h3>
-        <p className="text-gray-600 text-sm mb-2 truncate" title={book.author}>{book.author || 'Unknown Author'}</p>
+      <CardContent className="p-4 sm:p-5 flex-grow flex flex-col justify-between"  style={{ display: 'flex', flexDirection: 'column' }}>
+        <div>
+          <h3 className="font-semibold text-sm sm:text-base mb-1 line-clamp-2 text-gray-900 group-hover:text-amber-600 transition-colors" title={book.title}>{book.title || 'Unknown Title'}</h3>
+          <p className="text-gray-600 text-xs sm:text-sm mb-3 truncate" title={book.author}>{book.author || 'Unknown Author'}</p>
+        </div>
         
         <div className="flex items-center mb-3">
-          <div className="flex mr-2">
+          <div className="flex mr-2 gap-0.5">
             {renderStars(Math.round(book.rating || 0))}
           </div>
-          <span className="text-sm text-gray-600">{(book.rating || 0).toFixed(1)}</span>
+          <span className="text-xs sm:text-sm text-gray-600 font-medium">{(book.rating || 0).toFixed(1)}</span>
         </div>
 
         {book.genres && book.genres.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-1.5 mb-4">
             {book.genres.slice(0, 2).map((genre, index) => (
               <span
                 key={index}
-                className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full truncate"
+                className="px-2 py-1 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 text-xs rounded-full truncate font-medium border border-amber-200"
                 title={genre}
               >
                 {genre}
@@ -96,46 +98,41 @@ export const WorkingBookCard = ({ book }) => {
         )}
 
         <div className="space-y-2 mt-auto w-full">
-          <Button
+          <button
             onClick={handleBuyNow}
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
-            size="sm"
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm shadow-sm hover:shadow-md"
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
+            <ShoppingCart className="h-4 w-4" />
             Buy Now
-          </Button>
+          </button>
           
-          <div className="flex space-x-2">
-            <Button
+          <div className="flex gap-2">
+            <button
               onClick={handleAddToWantToRead}
               disabled={loading}
-              variant="outline"
-              size="sm"
-              className="flex-1"
+              className="flex-1 border border-gray-300 hover:border-amber-600 text-gray-700 hover:text-amber-600 hover:bg-amber-50 font-medium py-2 px-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-xs sm:text-sm disabled:opacity-50"
             >
-              <Plus className="h-4 w-4 mr-1" />
-              Want to Read
-            </Button>
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Want</span>
+            </button>
             
-            <Button
+            <button
               onClick={handleMarkAsRead}
               disabled={loading}
-              variant="outline"
-              size="sm"
-              className="flex-1"
+              className="flex-1 border border-gray-300 hover:border-red-600 text-gray-700 hover:text-red-600 hover:bg-red-50 font-medium py-2 px-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-xs sm:text-sm disabled:opacity-50"
             >
-              <Heart className="h-4 w-4 mr-1" />
-              Mark as Read
-            </Button>
+              <Heart className="h-4 w-4" />
+              <span className="hidden sm:inline">Read</span>
+            </button>
           </div>
 
           <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-full">
+              <button className="w-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 font-medium py-2 px-3 rounded-lg transition-all duration-300 text-sm">
                 Write Review
-              </Button>
+              </button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="rounded-2xl">
               <DialogHeader>
                 <DialogTitle>Write a Review</DialogTitle>
                 <DialogDescription>
@@ -145,7 +142,7 @@ export const WorkingBookCard = ({ book }) => {
               <div className="space-y-4">
                 <div>
                   <Label>Rating</Label>
-                  <div className="flex mt-2">
+                  <div className="flex mt-2 gap-1">
                     {renderStars(selectedRating, true, setSelectedRating)}
                   </div>
                 </div>
@@ -156,24 +153,23 @@ export const WorkingBookCard = ({ book }) => {
                     placeholder="What did you think of this book?"
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
-                    className="mt-2"
+                    className="mt-2 rounded-lg border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
-                <div className="flex space-x-2">
-                  <Button
+                <div className="flex gap-2">
+                  <button
                     onClick={handleSubmitReview}
                     disabled={loading}
-                    className="bg-amber-600 hover:bg-amber-700 flex-1"
+                    className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-medium py-2 rounded-lg transition-all duration-300 disabled:opacity-50"
                   >
                     Submit Review
-                  </Button>
-                  <Button
-                    variant="outline"
+                  </button>
+                  <button
                     onClick={() => setShowReviewDialog(false)}
-                    className="flex-1"
+                    className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-lg transition-all duration-300"
                   >
                     Cancel
-                  </Button>
+                  </button>
                 </div>
               </div>
             </DialogContent>
