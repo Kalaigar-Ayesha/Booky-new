@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Textarea, Label } from '@/components/InlineComponents';
-import { Star, Plus, BookOpen, Heart } from 'lucide-react';
+import { Star, Plus, BookOpen, Heart, ShoppingCart } from 'lucide-react';
 import { useBookActions } from '@/hooks/useBookActions';
+import { useToast } from '@/hooks/use-toast';
 
 export const WorkingBookCard = ({ book }) => {
   const { addToBooks, addReview, loading } = useBookActions();
+  const { toast } = useToast();
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [selectedRating, setSelectedRating] = useState(5);
+
+  const handleBuyNow = () => {
+    try {
+      // Open a link to buy the book
+      const bookSearchUrl = `https://www.bookdepository.com/search?searchTerm=${encodeURIComponent(book.title + ' ' + (book.author || ''))}`;
+      window.open(bookSearchUrl, '_blank');
+      toast({
+        title: "Opening Book Store",
+        description: "Finding the best prices for you..."
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not open book store",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleAddToReading = () => {
     addToBooks(book.id, 'reading');
@@ -41,31 +61,33 @@ export const WorkingBookCard = ({ book }) => {
   };
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-      <div className="aspect-[3/4] overflow-hidden">
+    <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col bg-white border border-gray-200">
+      <div className="aspect-[3/4] overflow-hidden bg-gray-100">
         <img
-          src={book.cover}
-          alt={book.title}
+          src={book.cover || 'https://via.placeholder.com/300x400?text=No+Cover'}
+          alt={book.title || 'Book Cover'}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Cover'; }}
         />
       </div>
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-1 line-clamp-2">{book.title}</h3>
-        <p className="text-gray-600 mb-2">{book.author}</p>
+      <CardContent className="p-4 flex-grow flex flex-col justify-between"  style={{ display: 'flex', flexDirection: 'column' }}>
+        <h3 className="font-semibold text-base mb-1 line-clamp-2 text-gray-900" title={book.title}>{book.title || 'Unknown Title'}</h3>
+        <p className="text-gray-600 text-sm mb-2 truncate" title={book.author}>{book.author || 'Unknown Author'}</p>
         
         <div className="flex items-center mb-3">
           <div className="flex mr-2">
-            {renderStars(Math.round(book.rating))}
+            {renderStars(Math.round(book.rating || 0))}
           </div>
-          <span className="text-sm text-gray-600">{book.rating.toFixed(1)}</span>
+          <span className="text-sm text-gray-600">{(book.rating || 0).toFixed(1)}</span>
         </div>
 
-        {book.genres && (
+        {book.genres && book.genres.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
             {book.genres.slice(0, 2).map((genre, index) => (
               <span
                 key={index}
-                className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full"
+                className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full truncate"
+                title={genre}
               >
                 {genre}
               </span>
@@ -73,15 +95,14 @@ export const WorkingBookCard = ({ book }) => {
           </div>
         )}
 
-        <div className="space-y-2">
+        <div className="space-y-2 mt-auto w-full">
           <Button
-            onClick={handleAddToReading}
-            disabled={loading}
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+            onClick={handleBuyNow}
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
             size="sm"
           >
-            <BookOpen className="h-4 w-4 mr-2" />
-            Start Reading
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Buy Now
           </Button>
           
           <div className="flex space-x-2">

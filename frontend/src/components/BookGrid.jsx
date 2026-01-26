@@ -3,6 +3,7 @@ import { BookCard } from './BookCard';
 import { api } from '@/services/api';
 import { Button } from '@/components/InlineComponents';
 import { useNavigate } from 'react-router-dom';
+import { DUMMY_BOOKS } from '@/data/dummyData';
 
 export const BookGrid = () => {
   const [books, setBooks] = useState([]);
@@ -16,7 +17,7 @@ export const BookGrid = () => {
   const fetchTrendingBooks = async () => {
     try {
       const result = await api.books.getAll({ sort: 'rating' });
-      if (result.data?.data) {
+      if (result.data?.data && result.data.data.length > 0) {
         // Get top 6 books by rating and convert _id to id
         const topBooks = result.data.data
           .slice(0, 6)
@@ -26,11 +27,13 @@ export const BookGrid = () => {
           }));
         setBooks(topBooks);
       } else {
-        setBooks([]);
+        // Use dummy books as fallback
+        setBooks(DUMMY_BOOKS.slice(0, 6));
       }
     } catch (error) {
       console.error('Error fetching books:', error);
-      setBooks([]);
+      // Use dummy books as fallback
+      setBooks(DUMMY_BOOKS.slice(0, 6));
     } finally {
       setLoading(false);
     }

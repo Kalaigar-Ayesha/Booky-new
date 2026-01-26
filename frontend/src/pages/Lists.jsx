@@ -5,6 +5,7 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import { Plus, List, Users, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { DUMMY_LISTS } from '@/data/dummyData';
 
 const Lists = () => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const Lists = () => {
       const userId = user._id || user.id;
       const result = await api.lists.getByUser(userId);
       
-      if (result.data?.data) {
+      if (result.data?.data && result.data.data.length > 0) {
         // Map MongoDB data and get book counts
         const listsWithCount = result.data.data.map(list => ({
           ...list,
@@ -44,11 +45,13 @@ const Lists = () => {
         }));
         setLists(listsWithCount);
       } else {
-        setLists([]);
+        // Use dummy lists when no lists found
+        setLists(DUMMY_LISTS);
       }
     } catch (error) {
       console.error('Error fetching lists:', error);
-      setLists([]);
+      // Use dummy lists as fallback
+      setLists(DUMMY_LISTS);
     } finally {
       setLoading(false);
     }

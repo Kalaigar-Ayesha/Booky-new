@@ -5,6 +5,7 @@ import { BookCard } from '@/components/BookCard';
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/InlineComponents';
 import { BookOpen, BookMarked, Clock, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DUMMY_USER_BOOKS } from '@/data/dummyData';
 
 const MyBooks = () => {
   const { user } = useAuth();
@@ -30,7 +31,7 @@ const MyBooks = () => {
       const userId = user._id || user.id;
       const result = await api.users.getBooks(userId);
       
-      if (result.data?.data) {
+      if (result.data?.data && result.data.data.length > 0) {
         // Map MongoDB data to expected format
         const userBooksWithDetails = result.data.data.map(userBook => ({
           id: userBook._id || userBook.id,
@@ -47,11 +48,13 @@ const MyBooks = () => {
         
         setUserBooks(userBooksWithDetails);
       } else {
-        setUserBooks([]);
+        // Use dummy books when no user books found
+        setUserBooks(DUMMY_USER_BOOKS);
       }
     } catch (error) {
       console.error('Error fetching user books:', error);
-      setUserBooks([]);
+      // Use dummy books as fallback
+      setUserBooks(DUMMY_USER_BOOKS);
     } finally {
       setLoading(false);
     }
@@ -158,17 +161,17 @@ const MyBooks = () => {
             </TabsList>
 
             <TabsContent value="currently_reading" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {[...getBooksByStatus('currently_reading'), ...getBooksByStatus('reading')].map((userBook) => (
                   <BookCard
                     key={userBook.id}
                     book={{
-                      id: parseInt(userBook.book.id),
-                      title: userBook.book.title,
-                      author: userBook.book.author,
-                      rating: userBook.book.average_rating,
+                      id: userBook.book?.id || userBook.book_id || 'unknown',
+                      title: userBook.book?.title || 'Unknown Title',
+                      author: userBook.book?.author || 'Unknown Author',
+                      rating: userBook.book?.average_rating || 0,
                       reviews: 0,
-                      cover: userBook.book.cover_url,
+                      cover: userBook.book?.cover_url || 'https://via.placeholder.com/300x400?text=No+Cover',
                       status: 'reading'
                     }}
                   />
@@ -187,17 +190,17 @@ const MyBooks = () => {
             </TabsContent>
 
             <TabsContent value="want_to_read" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {getBooksByStatus('want_to_read').map((userBook) => (
                   <BookCard
                     key={userBook.id}
                     book={{
-                      id: parseInt(userBook.book.id),
-                      title: userBook.book.title,
-                      author: userBook.book.author,
-                      rating: userBook.book.average_rating,
+                      id: userBook.book?.id || userBook.book_id || 'unknown',
+                      title: userBook.book?.title || 'Unknown Title',
+                      author: userBook.book?.author || 'Unknown Author',
+                      rating: userBook.book?.average_rating || 0,
                       reviews: 0,
-                      cover: userBook.book.cover_url,
+                      cover: userBook.book?.cover_url || 'https://via.placeholder.com/300x400?text=No+Cover',
                       status: 'want_to_read'
                     }}
                   />
@@ -216,17 +219,17 @@ const MyBooks = () => {
             </TabsContent>
 
             <TabsContent value="read" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {getBooksByStatus('read').map((userBook) => (
                   <BookCard
                     key={userBook.id}
                     book={{
-                      id: parseInt(userBook.book.id),
-                      title: userBook.book.title,
-                      author: userBook.book.author,
-                      rating: userBook.book.average_rating,
+                      id: userBook.book?.id || userBook.book_id || 'unknown',
+                      title: userBook.book?.title || 'Unknown Title',
+                      author: userBook.book?.author || 'Unknown Author',
+                      rating: userBook.book?.average_rating || 0,
                       reviews: 0,
-                      cover: userBook.book.cover_url,
+                      cover: userBook.book?.cover_url || 'https://via.placeholder.com/300x400?text=No+Cover',
                       status: 'read'
                     }}
                   />

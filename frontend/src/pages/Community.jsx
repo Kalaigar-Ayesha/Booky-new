@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { storage } from '@/services/storage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Avatar, AvatarFallback, AvatarImage, Button, Badge } from '@/components/InlineComponents';
 import { Star, Users, BookOpen, MessageCircle, Heart } from 'lucide-react';
+import { DUMMY_REVIEWS, DUMMY_TOP_READERS } from '@/data/dummyData';
 
 const Community = () => {
   const [recentReviews, setRecentReviews] = useState([]);
@@ -58,10 +59,13 @@ const Community = () => {
         reviews_count: Math.floor(Math.random() * 20) + 1
       }));
 
-      setRecentReviews(reviewsWithUsers);
-      setTopReaders(usersWithStats);
+      setRecentReviews(reviewsWithUsers.length > 0 ? reviewsWithUsers : DUMMY_REVIEWS);
+      setTopReaders(usersWithStats.length > 0 ? usersWithStats : DUMMY_TOP_READERS);
     } catch (error) {
       console.error('Error fetching community data:', error);
+      // Use dummy data as fallback
+      setRecentReviews(DUMMY_REVIEWS);
+      setTopReaders(DUMMY_TOP_READERS);
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,15 @@ export const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
   const navigationItems = [
     { label: 'Discover', href: '/discover' },
     { label: 'My Books', href: '/my-books' },
@@ -49,16 +58,20 @@ export const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback>
-                          {user.email?.charAt(0).toUpperCase()}
+                        <AvatarFallback className="bg-amber-100 text-amber-700 font-semibold">
+                          {user.username?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="px-4 py-2 border-b">
+                      <p className="text-sm font-medium text-gray-900">{user.username || user.email?.split('@')[0]}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
                     <DropdownMenuItem onClick={() => navigate('/profile')}>
                       <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <span>My Profile</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/my-books')}>
                       <BookOpen className="mr-2 h-4 w-4" />

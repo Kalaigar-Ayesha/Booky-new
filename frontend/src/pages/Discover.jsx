@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '@/services/api';
 import { WorkingBookCard } from '@/components/WorkingBookCard';
 import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/InlineComponents';
 import { Search, BookOpen } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { DUMMY_BOOKS } from '@/data/dummyData';
 
 const Discover = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,32 +13,40 @@ const Discover = () => {
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [sortBy, setSortBy] = useState('title');
   const [loading, setLoading] = useState(true);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     // Read search param from URL
     const urlSearch = searchParams.get('search');
-    if (urlSearch) {
+    if (urlSearch && urlSearch !== searchTerm) {
       setSearchTerm(urlSearch);
     }
-    fetchBooks();
   }, [searchParams]);
 
   useEffect(() => {
-    // Refetch when filters change
-    fetchBooks();
+    // Debounce search requests to reduce API calls
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+    
+    debounceTimer.current = setTimeout(() => {
+      fetchBooks();
+    }, 300);
+    
+    return () => clearTimeout(debounceTimer.current);
   }, [searchTerm, selectedGenre, sortBy]);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
       const params = {
-        search: searchTerm || undefined,
+        search: searchTerm && searchTerm.trim() ? searchTerm : undefined,
         genre: selectedGenre !== 'all' ? selectedGenre : undefined,
         sort: sortBy,
       };
       
       const result = await api.books.getAll(params);
-      if (result.data?.data) {
+      if (result.data?.data && Array.isArray(result.data.data) && result.data.data.length > 0) {
         // Handle MongoDB _id -> id conversion
         const booksWithId = result.data.data.map(book => ({
           ...book,
@@ -45,11 +54,14 @@ const Discover = () => {
         }));
         setBooks(booksWithId);
       } else {
-        setBooks([]);
+        // Use dummy books when no books are found
+        console.log('Using dummy books as no API books found');
+        setBooks(DUMMY_BOOKS);
       }
     } catch (error) {
       console.error('Error fetching books:', error);
-      setBooks([]);
+      // Use dummy books as fallback
+      setBooks(DUMMY_BOOKS);
     } finally {
       setLoading(false);
     }
@@ -128,30 +140,29 @@ const Discover = () => {
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book) => (
-            <WorkingBookCard 
-              key={book.id || book._id} 
-              book={{
-                id: book.id || book._id,
-                title: book.title,
-                author: book.author,
-                rating: book.average_rating,
-                cover: book.cover_url,
-                genres: book.genres,
-                description: book.description
-              }} 
-            />
-          ))}
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {books && books.length > 0 ? (
+            books.map((book) => (
+              <WorkingBookCard 
+                key={book.id || book._id} 
+                book={{
+                  id: book.id || book._id,
+                  title: book.title || 'Untitled',
+                  author: book.author || 'Unknown',
+                  rating: book.average_rating || 0,
+                  cover: book.cover_url || 'https://via.placeholder.com/300x400?text=No+Cover',
+                  genres: book.genres || [],
+                  description: book.description || ''
+                }} 
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 text-lg">No books found. Try adjusting your search.</p>
+            </div>
+          )}
         </div>
-
-        {books.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No books found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria</p>
-          </div>
-        )}
       </div>
     </div>
   );

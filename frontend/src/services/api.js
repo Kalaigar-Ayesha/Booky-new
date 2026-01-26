@@ -26,12 +26,14 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   try {
+    console.log(`API Request: ${options.method || 'GET'} ${API_BASE_URL}${endpoint}`);
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
     });
 
     const data = await response.json();
+    console.log(`API Response: ${response.status}`, data);
     
     if (!response.ok) {
       // Handle different error formats
@@ -43,6 +45,18 @@ const apiRequest = async (endpoint, options = {}) => {
 
     return { data, error: null };
   } catch (error) {
+    console.error(`API Error: ${endpoint}`, error);
+    
+    // Check if it's a network error
+    if (error.message.includes('Failed to fetch') || !window.navigator.onLine) {
+      return { 
+        error: { 
+          message: 'Network error: Backend server is not running. Make sure to run: cd backend && npm start' 
+        }, 
+        data: null 
+      };
+    }
+    
     return { error: { message: error.message }, data: null };
   }
 };
@@ -174,7 +188,18 @@ export const api = {
       return apiRequest(`/users/${id}`);
     },
 
+    getProfile: async (id) => {
+      return apiRequest(`/users/${id}`);
+    },
+
     update: async (id, data) => {
+      return apiRequest(`/users/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
+
+    updateProfile: async (id, data) => {
       return apiRequest(`/users/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),

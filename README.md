@@ -1,25 +1,14 @@
-<<<<<<< HEAD
-=======
+# 📘 Booksy – Letterboxd for Books
 
->>>>>>> 8932faba62dd692679fde011735a23a43a9b913d
-# 📘 Booky – Letterboxd for Books
-
-**Booky** is a full-stack web application inspired by Letterboxd, tailored for book lovers. It allows users to track their reading journey, rate and review books, build personalized book lists, follow other readers, and explore trending books — all in a modern, responsive interface with dark mode support.
+**Booksy** is a full-stack web application inspired by Letterboxd, tailored for book lovers. It allows users to track their reading journey, rate and review books, build personalized book lists, follow other readers, and explore trending books — all in a modern, responsive interface with dark mode support.
 
 ---
-<<<<<<< HEAD
 
-=======
->>>>>>> 8932faba62dd692679fde011735a23a43a9b913d
 ## ✨ Features
 
 - 📚 Track books as Read, Currently Reading, or Want to Read
 - ⭐ Rate and review books
-<<<<<<< HEAD
 - 💬 Like and comment on others' reviews
-=======
-- 💬 Like and comment on others’ reviews
->>>>>>> 8932faba62dd692679fde011735a23a43a9b913d
 - 📂 Create public or private book lists
 - 👥 Follow users and view their reading activity
 - 🔍 Search for books and users
@@ -34,7 +23,6 @@
 - Tailwind CSS
 - React Router
 - React Query
-<<<<<<< HEAD
 - Vite
 
 ### Backend
@@ -51,14 +39,17 @@
 
 - Node.js (v18 or higher)
 - MongoDB (local installation or MongoDB Atlas)
-- npm or yarn
+- npm, yarn, or bun
+- Docker & Docker Compose (for containerized setup)
 
 ### Installation
+
+#### Option 1: Local Development
 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd Booky-new-main
+   cd Booksy-main
    ```
 
 2. **Set up the Backend**
@@ -71,7 +62,7 @@
    Create a `.env` file in the `backend` directory:
    ```env
    PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/booky
+   MONGODB_URI=mongodb://localhost:27017/booksy
    JWT_SECRET=your-secret-key-change-this-in-production
    NODE_ENV=development
    ```
@@ -101,7 +92,7 @@
    npm run dev
    ```
 
-   The frontend will run on `http://localhost:8080`
+   The frontend will run on `http://localhost:5173`
 
 4. **Initialize Sample Data**
 
@@ -115,29 +106,63 @@
    curl -X POST http://localhost:3000/api/books/initialize
    ```
 
+#### Option 2: Docker Compose (Recommended)
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Booksy-main
+   ```
+
+2. **Start with Docker Compose**
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will:
+   - Build and start the frontend service on `http://localhost:5173`
+   - Build and start the backend service on `http://localhost:3000`
+   - Create MongoDB container with default configuration
+
+3. **Environment Variables**
+
+   The docker-compose.yml file handles most configuration. For custom settings, create `.env` files in `frontend/` and `backend/` directories.
+
 ---
 
 ## 📁 Project Structure
 
 ```
-Booky-new-main/
-├── frontend/          # React frontend application
+Booksy-main/
+├── frontend/                    # React frontend application
 │   ├── src/
-│   │   ├── components/   # React components
-│   │   ├── pages/        # Page components
-│   │   ├── services/     # API service layer
-│   │   ├── contexts/     # React contexts
-│   │   └── hooks/        # Custom hooks
+│   │   ├── components/         # React components
+│   │   ├── pages/              # Page components
+│   │   ├── services/           # API service layer
+│   │   ├── contexts/           # React contexts
+│   │   ├── hooks/              # Custom hooks
+│   │   ├── lib/                # Utilities and helpers
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── Dockerfile              # Frontend container configuration
 │   ├── package.json
-│   └── vite.config.js
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   └── index.html
 │
-├── backend/          # Express backend API
-│   ├── models/          # MongoDB models
-│   ├── routes/          # API routes
-│   ├── middleware/      # Express middleware
-│   ├── server.js        # Entry point
+├── backend/                    # Express backend API
+│   ├── models/                # MongoDB models
+│   ├── routes/                # API routes
+│   ├── middleware/            # Express middleware
+│   ├── scripts/               # Database initialization
+│   ├── Dockerfile             # Backend container configuration
+│   ├── server.js              # Entry point
 │   └── package.json
 │
+├── docker-compose.yml         # Docker Compose orchestration
+├── package.json               # Root package.json (if needed)
 └── README.md
 ```
 
@@ -195,17 +220,49 @@ The application uses JWT (JSON Web Tokens) for authentication. Tokens are stored
 
 ---
 
-## 🚀 Deployment
+## 🐳 Docker & Deployment
+
+### Running with Docker Compose
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f frontend
+docker-compose logs -f backend
+```
 
 ### Backend Deployment
+
 1. Set up MongoDB Atlas or use a cloud MongoDB service
 2. Update the `MONGODB_URI` in your production `.env`
-3. Deploy to services like Heroku, Railway, or Render
+3. Build the Docker image:
+   ```bash
+   cd backend
+   docker build -t booksy-backend .
+   docker run -p 3000:3000 --env-file .env booksy-backend
+   ```
+4. Or deploy to services like Heroku, Railway, or Render
 
 ### Frontend Deployment
-1. Build the frontend: `npm run build`
+
+1. Build the frontend:
+   ```bash
+   cd frontend
+   npm run build
+   ```
 2. Deploy the `dist` folder to services like Vercel, Netlify, or GitHub Pages
-3. Update `VITE_API_URL` to point to your production backend
+3. Or build and run Docker image:
+   ```bash
+   cd frontend
+   docker build -t booksy-frontend .
+   docker run -p 5173:5173 booksy-frontend
+   ```
+4. Update `VITE_API_URL` to point to your production backend
 
 ---
 
@@ -218,14 +275,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📄 License
 
 This project is open source and available under the MIT License.
-=======
-- Local Storage (for data persistence)
->>>>>>> 8932faba62dd692679fde011735a23a43a9b913d
 
 ---
 
 ## 🚀 Happy Building & Reading!
-<<<<<<< HEAD
-=======
-
->>>>>>> 8932faba62dd692679fde011735a23a43a9b913d

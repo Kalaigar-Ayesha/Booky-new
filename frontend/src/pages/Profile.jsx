@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { storage } from '@/services/storage';
-import { Button, Input, Label, Textarea, Card, CardContent, CardDescription, CardHeader, CardTitle, Avatar, AvatarFallback, AvatarImage } from '@/components/InlineComponents';
+import { api } from '@/services/api';
+import { Button, Input, Label, Textarea, Card, CardContent, CardDescription, CardHeader, CardTitle, Avatar, AvatarFallback } from '@/components/InlineComponents';
 import { BookOpen, Mail, User, Calendar, Edit, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -33,57 +33,57 @@ const Profile = () => {
     if (!user) return;
     
     try {
-      const result = await storage.from('profiles').select('*').eq('id', user.id).single();
+      setLoading(true);
+      const userId = user._id || user.id;
+      const result = await api.users.getProfile(userId);
       
-      if (result.error || !result.data) {
-        // If profile doesn't exist, create one
-        await createProfile();
-      } else {
-        setProfile(result.data);
+      if (result.data?.data) {
+        const profileData = result.data.data;
+        setProfile(profileData);
         setEditForm({
-          username: result.data.username || '',
-          bio: result.data.bio || ''
+          username: profileData.username || '',
+          bio: profileData.bio || ''
+        });
+      } else {
+        // Use default profile from user object
+        setProfile({
+          username: user.username || user.email?.split('@')[0] || 'User',
+          bio: user.bio || 'Book lover 📚',
+          email: user.email,
+          created_at: user.created_at
+        });
+        setEditForm({
+          username: user.username || user.email?.split('@')[0] || 'User',
+          bio: user.bio || 'Book lover 📚'
         });
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching profile:', error);
+      // Set default profile
+      setProfile({
+        username: user?.username || user?.email?.split('@')[0] || 'User',
+        bio: user?.bio || 'Book lover 📚',
+        email: user?.email,
+        created_at: user?.created_at
+      });
+      setEditForm({
+        username: user?.username || user?.email?.split('@')[0] || 'User',
+        bio: user?.bio || 'Book lover 📚'
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const createProfile = async () => {
+  const handleSave = async () => {
     if (!user) return;
 
     try {
-      const newProfile = {
-        id: user.id,
-        username: user.email?.split('@')[0] || 'User',
-        bio: 'Book lover 📚'
-      };
-      
-      const result = await storage.from('profiles').insert(newProfile).select().single();
-      
-      if (result.data) {
-        setProfile(result.data);
-        setEditForm({
-          username: result.data.username || '',
-          bio: result.data.bio || ''
-        });
-      }
-    } catch (error) {
-      console.error('Error creating profile:', error);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!user || !profile) return;
-
-    try {
-      const result = await storage.from('profiles').update({
+      const userId = user._id || user.id;
+      const result = await api.users.updateProfile(userId, {
         username: editForm.username,
         bio: editForm.bio
-      }).eq('id', user.id);
+      });
 
       if (result.error) throw result.error;
 
@@ -114,6 +114,15 @@ const Profile = () => {
       bio: profile?.bio || ''
     });
     setEditing(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      // Sign out and navigate
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   if (authLoading || loading) {
